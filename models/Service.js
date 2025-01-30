@@ -1,22 +1,22 @@
 const mongoose = require("mongoose");
 
-const ProductSchema = new mongoose.Schema(
+const ServiceSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: [true, "Please enter product name"],
+            required: [true, "Please enter service name"],
             trim: true,
-            maxlength: [100, "Product name cannot exceed 100 characters"],
+            maxlength: [100, "Service name cannot exceed 100 characters"],
         },
         price: {
             type: Number,
-            required: [true, "Please enter product price"],
-            maxlength: [5, "Product price cannot exceed 5 characters"],
+            required: [true, "Please enter service price"],
+            maxlength: [5, "Service price cannot exceed 5 characters"],
             default: 0.0,
         },
         description: {
             type: String,
-            required: [true, "Please enter product description"],
+            required: [true, "Please enter service description"],
         },
         ratings: {
             type: Number,
@@ -43,4 +43,4 @@ const ProductSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model("Product", ProductSchema);
+module.exports = mongoose.model("Service", ServiceSchema);

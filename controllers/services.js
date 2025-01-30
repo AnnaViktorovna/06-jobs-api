@@ -1,6 +1,6 @@
-const Product = require("../models/Product");
+const Product = require("../models/Service");
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError, NotFoundError } = require("../errors");
+
 
 const getAllProducts = async (req, res) => {
     res.send("Get all products");

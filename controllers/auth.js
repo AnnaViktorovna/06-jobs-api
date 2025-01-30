@@ -6,35 +6,45 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 
 const register = async (req, res) => {
-    const user = await User.create({ ...req.body });
-    const token = user.createJWT();
-    res
-        .status(StatusCodes.CREATED)
-        .json({ user: { name: user.getName() }, token });
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+        throw new BadRequestError("Please provide name, email, and password");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword });
+
+    const token = jwt.sign({ email, id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "24h",
+    });
+
+    res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
 };
 
 const login = async (req, res) => {
     const { email, password } = req.body;
     console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
     if (!email || !password) {
         throw new BadRequestError("Please provide email and password");
     }
+
     const user = await User.findOne({ email });
+
     if (!user) {
-        throw new UnauthenticatedError("Invalid Credentials");
+        throw new UnauthenticatedError("Invalid credentials");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // const newUser = await User.create({ email, password: hashedPassword });
-
-    const isPasswordCorrect = await user.comparePassword(password);
+    const isPasswordCorrect = await bcrypt.compare(password);
     if (!isPasswordCorrect) {
         throw new UnauthenticatedError("Wrong password");
     }
-    const token = jwt.sign({ email, id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-    res.status(StatusCodes.OK).json({ user: { name: user.getName() }, token });
-};
 
+    const token = jwt.sign({ email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
+    res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+
+};
 module.exports = {
     register,
     login,

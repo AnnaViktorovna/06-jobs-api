@@ -1,6 +1,8 @@
 require('dotenv').config();
 require('express-async-errors');
 const express = require('express');
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
 const app = express();
 const authRoutes = require("./routes/auth");
 const connectDB = require("./db/connect")
@@ -12,7 +14,7 @@ const errorHandlerMiddleware = require('./middleware/error-handler');
 app.use(express.json());
 
 
-
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.get('/', (req, res) => {
   res.send('service api');
 });

@@ -25,7 +25,7 @@ const login = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ email, password: hashedPassword });
+    // const newUser = await User.create({ email, password: hashedPassword });
 
     const isPasswordCorrect = await user.comparePassword(password);
     if (!isPasswordCorrect) {

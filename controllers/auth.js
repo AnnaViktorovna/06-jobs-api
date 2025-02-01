@@ -12,7 +12,7 @@ const register = async (req, res) => {
         throw new BadRequestError("Please provide name, email, and password");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({ name, email, password: hashedPassword });
 
     const token = jwt.sign({ email, id: user._id }, process.env.JWT_SECRET, {

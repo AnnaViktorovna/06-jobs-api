@@ -20,7 +20,7 @@ app.use("/api/auth", authRoutes);
 app.use(require('./middleware/not-found'));
 app.use(require('./middleware/error-handler'));
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3005;
 
 const start = async () => {
   try {

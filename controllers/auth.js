@@ -1,51 +1,68 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const { StatusCodes } = require("http-status-codes");
-const { BadRequestError, UnauthenticatedError } = require("../errors");
-require("dotenv").config();
-const bcrypt = require("bcrypt");
+const asyncHandler = require("express-async-handler");
+const bcrypt = require("bcryptjs");
+const {User, validateRegisterUser, validateLoginUser} = require("../models/User");
 
-const register = async (req, res) => {
-    const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-        throw new BadRequestError("Please provide name, email, and password");
+module.exports.registerUserCtrl = asyncHandler(async (req, res) => {
+
+    const { error } = validateRegisterUser(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
     }
 
 
-    const user = await User.create({ name, email, password: hashedPassword });
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+        return res.status(400).json({ message: "User already exists" });
+    }
 
-    const token = jwt.sign({ email, id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "24h",
+
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+
+    user = new User({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: hashedPassword,
     });
 
-    res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
-};
-
-const login = async (req, res) => {
-    const { email, password } = req.body;
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
-
-    if (!email || !password) {
-        throw new BadRequestError("Please provide email and password");
+    try {
+        await user.save();  // Save the new user
+    } catch (err) {
+        return res.status(500).json({ message: "Failed to create user: " + err.message });
     }
 
-    const user = await User.findOne({ email });
 
+    res.status(201).json({
+        message: "Registration successful. Please log in.",
+    });
+});
+
+
+module.exports.loginUserCtrl = asyncHandler (async (req, res ) =>{
+
+    const { error } = validateLoginUser(req.body);
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+
+    const user = await User.findOne({ email: req.body.email});
     if (!user) {
-        throw new UnauthenticatedError("Invalid credentials");
+        return res.status(400).json({ message: "invalid email or password "});
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password);
-    if (!isPasswordCorrect) {
-        throw new UnauthenticatedError("Wrong password");
+    const isPasswordMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isPasswordMatch) {
+        return res.status(400).json({ message: "invalid  password "});
     }
 
-    const token = jwt.sign({ email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "24h" });
-    res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+    const token = jwt.sign({ username, id }, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-};
-module.exports = {
-    register,
-    login,
-};
+    console.log("Generated Token:", token); // Логируем сгенерированный токен
+    res.status(200).json({ msg: "user login", token });
+
+});

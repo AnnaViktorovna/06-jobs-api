@@ -3,16 +3,16 @@ const router = express.Router();
 
 const {
     getAllServices,
-    getServiceByIdById,
     createService,
     updateService,
     deleteService,
+    getService,
 } = require("../controllers/services");
 
 router.route("/").post(createService).get(getAllServices);
 router
     .route("/:id")
-    .get(getServiceByIdById)
+    .get(getService)
     .patch(updateService)
     .delete(deleteService);
 

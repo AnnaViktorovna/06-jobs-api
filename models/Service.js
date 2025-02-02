@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const ServiceSchema = new mongoose.Schema(
     {
         name: {
@@ -18,15 +19,10 @@ const ServiceSchema = new mongoose.Schema(
             type: String,
             required: [true, "Please enter service description"],
         },
-        ratings: {
-            type: Number,
-            default: 0,
-        },
-        reviews: [{ body: String, date: Date }],
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
-            required: [true, "User is required"],
+            required: [true, "User is required"]
         },
         type: {
             type: String,
@@ -36,6 +32,7 @@ const ServiceSchema = new mongoose.Schema(
                 "Cosmetology",
                 "Makeup",
                 "Haircut",
+                "Others"
             ],
             default: "Others",
         },

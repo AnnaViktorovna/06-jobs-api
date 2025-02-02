@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 });
 app.use("/auth", authRoutes);
 const serviceRoutes = require("./routes/services");
-app.use(".", serviceRoutes);
+app.use("/services", serviceRoutes);
 
 
 app.use(require('./middleware/not-found'));

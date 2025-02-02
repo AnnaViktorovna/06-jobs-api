@@ -7,4 +7,11 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ err })
 }
 
-module.exports = errorHandlerMiddleware
+module.exports = (err, req, res, next) => {
+  console.error(err.stack);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    message: err.message || "An unexpected error occurred",
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
+};

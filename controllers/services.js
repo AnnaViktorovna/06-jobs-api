@@ -6,12 +6,12 @@ const { BadRequestError, NotFoundError } = require('../errors')
 const getAllServices = async (req, res) => {
     const services = await Service.find({createdBy: req.user.userId}).sort('createdAt')
     res.status(StatusCodes.OK).json({service, count: services.length})
-
+};
     const getService = async (req, res) => {
         const {
             user: {userId},
             params: {id: serviceId},
-        } = req
+        } = req.params;
 
 
         const service = await Service.findOne({
@@ -22,7 +22,7 @@ const getAllServices = async (req, res) => {
             throw new NotFoundError(`No service with id ${serviceId}`)
         }
         res.status(StatusCodes.OK).json({service})
-    }
+    };
 
     const createService = async (req, res) => {
         req.body.createdBy = req.user.userId;
@@ -51,20 +51,19 @@ const getAllServices = async (req, res) => {
     }
 
     const deleteService = async (req, res) => {
-        const {
-            user: {userId},
-            params: {id: serviceId},
-        } = req
+            const { userId } = req.user;
+            const { id: serviceId } = req.params;
 
-        const job = await Service.findByIdAndRemove({
-            _id: serviceId,
-            createdBy: userId,
-        })
-        if (!job) {
-            throw new NotFoundError(`No service with id ${serviceId}`)
-        }
-        res.status(StatusCodes.OK).send()
-    }
+            const service = await Service.findByIdAndRemove({
+                _id: serviceId,
+                createdBy: userId,
+            });
+            if (!service) {
+                throw new NotFoundError(`No service with id ${serviceId}`);
+            }
+            res.status(StatusCodes.OK).send();
+        };
+
     module.exports = {
         getAllServices,
         createService,
@@ -72,4 +71,3 @@ const getAllServices = async (req, res) => {
         deleteService,
         getService,
     };
-}

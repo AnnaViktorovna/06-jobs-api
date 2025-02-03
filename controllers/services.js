@@ -14,8 +14,6 @@ const getAllServices = async (req, res) => {
             return res.status(401).json({ message: 'User not authenticated' });
         }
 
-
-
         const service = await Service.findOne({
             _id: serviceId,
             createdBy: username,

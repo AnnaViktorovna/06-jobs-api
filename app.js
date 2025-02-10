@@ -1,7 +1,7 @@
 require('dotenv').config();
 require('express-async-errors');
 const connectDB = require("./db/connect");
-
+const authenticateUser = require('./middleware/authentication');
 
 const helmet = require('helmet');
 const cors = require('cors');
@@ -44,12 +44,18 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 
 app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/jobs', jobsRouter);
+app.use('/api/v1/jobs', authenticateUser, jobsRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-
+app.use((err, req, res, next) => {
+    if (err instanceof UnauthenticatedError) {
+        return res.status(401).json({ message: err.message });
+    }
+    // Handle other types of errors or pass them to the default error handler
+    next(err);
+});
 
 const port = process.env.PORT || 3005;
 

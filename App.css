@@ -1,0 +1,101 @@
+/* Wrapper and Page Layout */
+.wrapper {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Form Rows - Assuming you have components that follow this pattern */
+.form-row {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Input fields styling */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #0056b3;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0,86,179,0.25);
+}
+
+/* Button styling */
+.btn {
+    padding: 0.8rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn:disabled {
+    background-color: #ccc;
+    cursor: default;
+}
+
+.btn-block {
+    width: 100%;
+    text-align: center;
+}
+
+/* Special styles for alternate actions */
+.btn-hipster {
+    background-color: #6c757d; /* A grayish tone */
+}
+
+.btn-hipster:hover {
+    background-color: #5a6268;
+}
+
+/* Member toggle button */
+.member-btn {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.member-btn:hover {
+    text-decoration: none;
+    color: #0056b3;
+}
+
+/* Logo and Headings */
+.logo {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+h3 {
+    text-align: center;
+    color: #333;
+}
